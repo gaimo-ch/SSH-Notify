@@ -19,7 +19,7 @@ def get_info():
 def send_discord():
     local_ip, global_ip, country, hostname = get_info()
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    message = f'```🚨SSHログインが検知されたよ ⌚{now}\n\n🟣サーバー\nホスト名: {hostname}\nローカルIP: {local_ip}\n\n🟡クライアント\nグローバルIP: {global_ip}\n国: {country}```'
+    message = f'```🚨SSHログインが検知されたよ\n⌚{now}\n\n🟣サーバー\nホスト名: {hostname}\nローカルIP: {local_ip}\n\n🟡クライアント\nグローバルIP: {global_ip}\n国: {country}```'
     data = {'content': message}
     response = requests.post(webhook_url, json=data)
 

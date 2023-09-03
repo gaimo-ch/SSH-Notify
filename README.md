@@ -1,5 +1,5 @@
-# 🚨ssh-notify
+# 🚨SSH-Notify
 
-🟣 Linuxサーバーに対してSSH接続があったらPAMを用いて検知し、Discordのwebhookで繋げて通知を行うよ。<br>
+🟣 Linuxサーバーに対するSSH接続をPAMを用いて検知し、Discordのwebhookで繋げて通知を行うよ。
 
-![1](https://github.com/gaimo-ch/ssh-notify/assets/116097299/6ec5a356-4008-4b99-a795-04c1547c8f93)
+![1](https://github.com/gaimo-ch/SSH-Notify/assets/116097299/a54793b9-6b4c-44dd-8afd-72e356811a36)
