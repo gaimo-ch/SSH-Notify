@@ -2,24 +2,35 @@
 import socket
 import netifaces
 import requests
+import re
 from datetime import datetime
 
-webhook_url = 'ここにWebhookURLを入力'
+webhook_url = 'ここにWebhookのURLを入力'
+log_path = '/var/log/auth.log' #認証ログのパス
+ssh_pattern = r'sshd\[\d+\]: Accepted .* for .* from (\d+\.\d+\.\d+\.\d+)'
 
 def get_info():
     try:
-        local_ip = netifaces.ifaddresses('ens18')[netifaces.AF_INET][0]['addr']
-        global_ip = requests.get('https://api64.ipify.org?format=json').json()['ip']
-        country = requests.get(f'https://ipinfo.io/{global_ip}/json').json().get('country', '不明')
-        hostname = socket.gethostname()
-        return local_ip, global_ip, country, hostname
+        hostname = socket.gethostname() # サーバのホスト名を取得
+
+        server_ip = netifaces.ifaddresses('ens18')[netifaces.AF_INET][0]['addr'] # サーバのIPを取得
+
+        with open(log_path) as log_file: # ログからクライアントのIPを取得
+            log_content = log_file.read()
+            match = re.search(ssh_pattern, log_content)
+            if match:
+                client_ip = match.group(1)
+            else:
+                client_ip = 'IPを取得できないよ' 
+
+        return hostname, server_ip, client_ip
     except Exception as e:
         return str(e), '不明'
 
 def send_discord():
-    local_ip, global_ip, country, hostname = get_info()
+    hostname, server_ip, client_ip = get_info()
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    message = f'```🚨SSHログインが検知されたよ\n⌚{now}\n\n🟣サーバー\nホスト名: {hostname}\nローカルIP: {local_ip}\n\n🟡クライアント\nグローバルIP: {global_ip}\n国: {country}```'
+    message = f'```🚨SSHログインが検知されたよ\n⌚{now}\n\n🟣サーバー\nホスト名: {hostname}\nIP: {server_ip}\n\n🟡クライアント\nIP: {client_ip}```'
     data = {'content': message}
     response = requests.post(webhook_url, json=data)
 
