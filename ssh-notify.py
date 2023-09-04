@@ -4,35 +4,42 @@ import netifaces
 import requests
 import re
 from datetime import datetime
+import subprocess
 
-webhook_url = 'ここにWebhookのURLを入力'
-log_path = '/var/log/auth.log' #認証ログのパス
-ssh_pattern = r'sshd\[\d+\]: Accepted .* for .* from (\d+\.\d+\.\d+\.\d+)'
+webhook_url = 'ここにWebhookURLを入力'
+log_path = '/var/log/auth.log' # 認証ログのパス
+ssh_pattern = r'sshd\[\d+\]: Accepted .* for .* from (\d+\.\d+\.\d+\.\d+)' # 認証ログからIPを取得するための正規表現
 
-def get_info():
+def get_server(): # サーバの情報を取得
     try:
         hostname = socket.gethostname() # サーバのホスト名を取得
-
         server_ip = netifaces.ifaddresses('ens18')[netifaces.AF_INET][0]['addr'] # サーバのIPを取得
-
-        with open(log_path) as log_file: # ログからクライアントのIPを取得
-            log_content = log_file.read()
-            match = re.search(ssh_pattern, log_content)
-            if match:
-                client_ip = match.group(1)
-            else:
-                client_ip = 'IPを取得できないよ' 
-
-        return hostname, server_ip, client_ip
+        return hostname, server_ip
     except Exception as e:
-        return str(e), '不明'
+        return str(e)
+    
+def get_client(): # クライアントの情報を取得
+    try:
+        # 最新のデータを取得するため、ログファイルから最後の10行を取得
+        result = subprocess.check_output(['tail', '-n', '10', log_path], universal_newlines=True)
+        log_lines = result.split('\n')
+        client_ip = [re.findall(ssh_pattern, line)[0] for line in log_lines if re.search(ssh_pattern, line)]
+        
+        if client_ip:
+            return client_ip[-1]
+        else:
+            return "IPが取得できませんでした"
+    except Exception as e:
+        return str(e)
 
-def send_discord():
-    hostname, server_ip, client_ip = get_info()
+
+def send_discord(): # Discordに通知を送信
+    hostname, server_ip = get_server()
+    client_ip = get_client()
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     message = f'```🚨SSHログインが検知されたよ\n⌚{now}\n\n🟣サーバー\nホスト名: {hostname}\nIP: {server_ip}\n\n🟡クライアント\nIP: {client_ip}```'
     data = {'content': message}
-    response = requests.post(webhook_url, json=data)
+    requests.post(webhook_url, json=data)
 
 if __name__ == '__main__':
     send_discord()
