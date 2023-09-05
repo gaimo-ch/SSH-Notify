@@ -8,7 +8,7 @@ import subprocess
 
 webhook_url = 'ここにWebhookURLを入力'
 log_path = '/var/log/auth.log' # 認証ログのパス
-ssh_pattern = r'sshd\[\d+\]: Accepted .* for .* from (\d+\.\d+\.\d+\.\d+)' # 認証ログからIPを取得するための正規表現
+ssh_pattern = r'sshd.*Accepted .* for .* from (\d+\.\d+\.\d+\.\d+)' # 認証ログからIPを取得するための正規表現
 
 def get_server(): # サーバの情報を取得
     try:
@@ -28,10 +28,9 @@ def get_client(): # クライアントの情報を取得
         if client_ip:
             return client_ip[-1]
         else:
-            return "IPが取得できませんでした"
+            return "IPを取得できないよ"
     except Exception as e:
-        return str(e)
-
+        return 'アクセスログを取得する権限がないよ'
 
 def send_discord(): # Discordに通知を送信
     hostname, server_ip = get_server()

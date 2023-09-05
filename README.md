@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/gaimo-ch/SSH-Notify/assets/116097299/a54793b9-6b4c-44dd-8afd-72e356811a36">
+  <img src="https://github.com/gaimo-ch/SSH-Notify/assets/116097299/c0852792-f22a-42d2-ab9a-274bd60a801a">
 </p>
 
 ---
@@ -20,18 +20,21 @@
 
 ## Discord
 
-適当なDiscordサーバを立て、Webhookを作成、URLをPythonコード内に貼り付けます。<br>
+適当なDiscordサーバを立て、Webhookを作成、URLをコード内に貼り付けます。<br>
 サーバー設定 → 連携サービス → ウェブフック
 
 ![2](https://github.com/gaimo-ch/SSH-Notify/assets/116097299/fbce3fc1-e9c9-4d55-a19b-3309c386f71f)
 
 ## Linux
 
-PythonファイルをLinuxサーバ内の適当な場所に配置します。<br>
-netifaces, requestsライブラリを使用するため、事前にインストールしておいてください。
+ssh-notify.pyをLinuxサーバ内の適当な場所に配置します。<br>
+netifaces, requestsライブラリを使用するため、事前に`pip install`しておいてください。
+
+SSHのアクセスログからクライアントのIPアドレスを取得します。各ディストリビューションごとに認証ログのパスが違うため、編集する必要があるかもしれません。<br>
+本コードでは`/var/log/auth.log`を指定しています。
 
 PAMはLinuxで使用される認証システムのライブラリです。これを用いてSSH接続を検知し、Pythonスクリプトを実行します。<br>
-管理者権限で`/etc/pam.d/sshd`に以下の記述を追記します。パスは各自変更してください。
+root権限で`/etc/pam.d/sshd`に以下の記述を追記します。パスは各自変更してください。
 
 ```sh
 session optional pam_exec.so type=open_session /path/to/dir/ssh-notify.py
