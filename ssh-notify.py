@@ -17,7 +17,7 @@ def get_server(): # サーバの情報を取得
         return hostname, server_ip
     except Exception as e:
         return str(e)
-    
+
 def get_client(): # クライアントの情報を取得
     try:
         # 最新のデータを取得するため、ログファイルから最後の10行を取得
@@ -35,6 +35,11 @@ def get_client(): # クライアントの情報を取得
 def send_discord(): # Discordに通知を送信
     hostname, server_ip = get_server()
     client_ip = get_client()
+    
+    if client_ip == 'ここに除外するIPを入力': 
+        pass
+        return
+
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     message = f'```🚨SSHログインが検知されたよ\n⌚{now}\n\n🟣サーバー\nホスト名: {hostname}\nIP: {server_ip}\n\n🟡クライアント\nIP: {client_ip}```'
     data = {'content': message}
