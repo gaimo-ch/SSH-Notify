@@ -13,7 +13,7 @@ ssh_pattern = r'sshd.*Accepted .* for .* from (\d+\.\d+\.\d+\.\d+)' # 認証ロ�
 def get_server(): # サーバの情報を取得
     try:
         hostname = socket.gethostname() # サーバのホスト名を取得
-        server_ip = netifaces.ifaddresses('ens18')[netifaces.AF_INET][0]['addr'] # サーバのIPを取得
+        server_ip = netifaces.ifaddresses('ens18')[netifaces.AF_INET][0]['addr'] # ens18をNIC名に指定していますが、環境に合わせて変更してください
         return hostname, server_ip
     except Exception as e:
         return str(e)
