@@ -49,7 +49,7 @@ PAMはLinuxで使用される認証システムで、これを用いてSSH接続
 root権限で`/etc/pam.d/sshd`に以下の記述を追記しよう。パスは各自変更してね。
 
 ```sh
-session optional pam_exec.so type=open_session /path/to/dir/ssh-notify.py
+session optional pam_exec.so type=open_session /path/to/ssh-notify.py
 ```
 
 # ✅ 試してみよう
