@@ -32,12 +32,11 @@ def get_client(): # クライアントの情報を取得
     except Exception as e:
         return 'アクセスログを取得する権限がないよ'
 
-def send_discord(): # Discordに通知を送信
+def send(): # ntfyに通知を送信
     hostname, server_ip = get_server()
     client_ip = get_client()
     
     if client_ip == 'ここに除外するIPを入力': 
-        pass
         return
     
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -45,4 +44,4 @@ def send_discord(): # Discordに通知を送信
     requests.post(ntfy_url, data=message.encode('utf-8'))
 
 if __name__ == '__main__':
-    send_discord()
+    send()
